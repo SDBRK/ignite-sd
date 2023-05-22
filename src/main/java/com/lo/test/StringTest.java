@@ -173,4 +173,12 @@ public class StringTest {
 //        String date5 = DateUtil.format(new Date(),"yyyydd");
 //        System.out.println(date5);
     }
+
+    @Test
+    public void charToInt(){
+        System.out.println((int)'A');
+        System.out.println((int)'Z');
+        System.out.println((int)'a');
+        System.out.println((int)'z');
+    }
 }

@@ -101,6 +101,12 @@
             <artifactId>cpdetector</artifactId>
             <version>1.0.10</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/e-iceblue/spire.pdf.free -->
+<!--        <dependency>-->
+<!--            <groupId>e-iceblue</groupId>-->
+<!--            <artifactId>spire.pdf.free</artifactId>-->
+<!--            <version>5.1.0</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

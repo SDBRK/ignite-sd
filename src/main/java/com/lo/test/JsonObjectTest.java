@@ -3,6 +3,7 @@ package com.lo.test;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author RujiangLiu
@@ -40,5 +41,17 @@ public class JsonObjectTest {
 
         System.out.println(jsonObject);
         System.out.println(jsonObject2);
+    }
+
+    @Test
+    public void stringToJsonObject(){
+
+        String s = "{\"userName\":\"管理员\",\"user\":{\"userNum\":\"admin\",\"id\":0,\"roleList\":[],\"userName\":\"管理员\"},\"userId\":\"0\"}";
+
+        System.out.println(s);
+
+        JSONObject jsonObject = JSON.parseObject(s);
+
+        System.out.println(jsonObject.getString("userName"));
     }
 }

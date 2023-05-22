@@ -1,9 +1,11 @@
 package com.lo.test;
 
 import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -64,7 +66,7 @@ public class DateFormatTest {
 //        System.out.println(date);
 //
 
-        int day = 4;
+        int day = 11;
 
 //        Date beginOfWeek = DateUtil.beginOfWeek(new Date(), false);
 //        beginOfWeek = DateUtil.offsetDay(beginOfWeek, day);
@@ -89,15 +91,14 @@ public class DateFormatTest {
 //        beginOfWeek = DateUtil.offsetWeek(beginOfWeek, 1);
 //        beginOfWeek = DateUtil.offsetDay(beginOfWeek, day-1);
 //        System.out.println(beginOfWeek);
-
-//        Date beginOfMonth = DateUtil.beginOfMonth(date);
-//        int nowDay = DateUtil.dayOfMonth(date);
-//        System.out.println(nowDay);
-//        if (day <= nowDay) {
-//            beginOfMonth = DateUtil.offsetMonth(beginOfMonth, 1);
-//        }
-//        beginOfMonth = DateUtil.offsetDay(beginOfMonth, day-1);
-//        System.out.println(beginOfMonth);
+        Date beginOfMonth = DateUtil.beginOfMonth(date);
+        int nowDay = DateUtil.dayOfMonth(date);
+        System.out.println(nowDay);
+        if (day <= nowDay) {
+            beginOfMonth = DateUtil.offsetMonth(beginOfMonth, 1);
+        }
+        beginOfMonth = DateUtil.offsetDay(beginOfMonth, day-1);
+        System.out.println(beginOfMonth);
 
 //        Date beginOfYear = DateUtil.beginOfYear(date);
 //        int nowDay = DateUtil.dayOfYear(date);
@@ -156,7 +157,33 @@ public class DateFormatTest {
 //        System.out.println(date1);
 //        Date date2 = DateUtil.parseTime("14:44:04");
 //        System.out.println(date2);
-        Date date3 = DateUtil.parseDateTime("2023-03-08 14:44:04");
-        System.out.println(date3);
+//        Date date3 = DateUtil.parseDateTime("2023-03-08 14:44:04");
+//        System.out.println(date3);
+    }
+
+    @Test
+    public void offsetHour(){
+
+        String eventDate = "2023-05-06";
+        String time = "00:00:00";
+
+        String date = eventDate+ " " +time;
+
+        Date offsetDate =  DateUtil.offsetHour(DateUtil.parse(date, DatePattern.NORM_DATETIME_FORMATTER),-1);
+
+        System.out.println(offsetDate);
+    }
+
+    @Test
+    public void offsetMinutes(){
+
+        String eventDate = "2023-05-16";
+        String time = "15:10:00";
+
+        String date = eventDate+ " " +time;
+
+        Date offsetDate =  DateUtil.offsetMinute(DateUtil.parse(date, DatePattern.NORM_DATETIME_FORMATTER),5*-1);
+
+        System.out.println(offsetDate);
     }
 }
