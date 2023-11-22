@@ -3,6 +3,7 @@ package com.lo.test;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +48,7 @@ public class StreamTest {
                 "    {\"id\":\"1003\",\"name\":\"测试3\",\"value\":\"333333\",\"age\":\"13\"}\n" +
                 "]";
 
-        JSONArray data=JSONArray.parseArray(sourceStr);
+        JSONArray data = JSONArray.parseArray(sourceStr);
 //        Map<String, List<?>> dataMap = new HashMap<String, List<?>>();
 //        List<List<Object>> lst = new ArrayList<>();
 //        //数据分组算法
@@ -75,8 +76,8 @@ public class StreamTest {
             StringJoiner joiner = new StringJoiner("_");
             for (String s : ss) {
                 JSONObject jsonObject = JSON.parseObject(x.toString());
-                if (!jsonObject.containsKey(s)){
-                    log.error("表格中不存在该字段:{}",s);
+                if (!jsonObject.containsKey(s)) {
+                    log.error("表格中不存在该字段:{}", s);
                     throw new RuntimeException("表格中不存在该字段");
                 }
                 Object o = jsonObject.get(s);
@@ -91,6 +92,42 @@ public class StreamTest {
 //        Map<Object, List<Object>> groupById = data.stream().collect(Collectors.groupingBy(x -> JSON.parseObject(x.toString()).get("sex")));
         System.out.println(groupById);
 
+    }
+
+    @Test
+    public void mapTest() {
+
+        List<UserInfo> userInfos = new ArrayList<>();
+        UserInfo userInfo = new UserInfo(1L, "江大神", true);
+        UserInfo userInfo1 = new UserInfo(2L, "江哥", true);
+        UserInfo userInfo2 = new UserInfo(3L, "江姐", true);
+        UserInfo userInfo3 = new UserInfo(4L, "江老师", true);
+        UserInfo userInfo4 = new UserInfo(5L, "江老师", false);
+
+        userInfos.add(userInfo);
+        userInfos.add(userInfo1);
+        userInfos.add(userInfo2);
+        userInfos.add(userInfo3);
+        userInfos.add(userInfo4);
+
+        Map<String, Long> usernames = userInfos.stream().filter(UserInfo::getStatus).collect(Collectors.toMap(UserInfo::getNickname, UserInfo::getId));
+
+        System.out.println(usernames);
+
+    }
+
+
+    @Data
+    public static class UserInfo {
+        private Long id;
+        private String nickname;
+        private Boolean status;
+
+        public UserInfo(Long id, String nickname, Boolean status) {
+            this.id = id;
+            this.nickname = nickname;
+            this.status = status;
+        }
     }
 
 }

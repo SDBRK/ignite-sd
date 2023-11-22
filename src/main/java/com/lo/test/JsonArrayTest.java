@@ -1,13 +1,14 @@
 package com.lo.test;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author RujiangLiu
@@ -25,86 +26,80 @@ public class JsonArrayTest {
 //        System.out.println(jsonArray.size());
 //        System.out.println(jsonArray.getJSONObject(0).toJSONString());
 
-        String s = "{\n" +
-                "    \"calendarId\": 1,\n" +
-                "    \"code\": \"code\",\n" +
-                "    \"name\": \"流程1\",\n" +
-                "    \"priority\": 2,\n" +
-                "    \"remark\": \"流程流程\",\n" +
-                "    \"processData\": {\n" +
-                "        \"nodes\": [\n" +
-                "            {\n" +
-                "                \"id\": \"node_input\",\n" +
-                "                \"data\": {},\n" +
-                "                \"position\": {\n" +
-                "                    \"x\": 135,\n" +
-                "                    \"y\": -75\n" +
-                "                },\n" +
-                "                \"type\": \"input\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"id\": \"node_1_1668134641941\",\n" +
-                "                \"data\": {\n" +
-                "                    \"name\": \"节点1\",\n" +
-                "                    \"limitHours\": 5,\n" +
-                "                    \"sendTo\": \"AAA\",\n" +
-                "                    \"remark\": \"节点节点节点\"\n" +
-                "                },\n" +
-                "                \"position\": {\n" +
-                "                    \"x\": 120,\n" +
-                "                    \"y\": 0\n" +
-                "                },\n" +
-                "                \"type\": \"default\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"id\": \"node_output\",\n" +
-                "                \"data\": {},\n" +
-                "                \"position\": {\n" +
-                "                    \"x\": 135,\n" +
-                "                    \"y\": 75\n" +
-                "                },\n" +
-                "                \"type\": \"output\"\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"edges\": [\n" +
-                "            {\n" +
-                "                \"id\": \"reactflow__edge-node_input-node_1_1668134641941\",\n" +
-                "                \"source\": \"node_input\",\n" +
-                "                \"target\": \"node_1_1668134641941\",\n" +
-                "                \"type\": \"step\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"id\": \"reactflow__edge-node_1_1668134641941-node_output\",\n" +
-                "                \"source\": \"node_1_1668134641941\",\n" +
-                "                \"target\": \"node_output\",\n" +
-                "                \"type\": \"step\"\n" +
-                "            }\n" +
-                "        ]\n" +
-                "    }\n" +
-                "}";
+        String s = "{\"gdqxsq\":[{\"gdh\":\"A1\",\"jyqx\":\"1;2;8\"},{\"gdh\":\"A2\",\"jyqx\":\"1;8;10\"}]}";
 
+        System.out.println(s);
+        JSONArray array = JSONObject.parseObject(s).getJSONArray("gdqxsq");
+        Map<String, JSONObject> jyqxMaps = new HashMap<>();
 
-        JSONObject a = JSONObject.parseObject(s);
-        JSONObject processData = a.getJSONObject("processData");
-//        System.out.println(processData.toJSONString());
-//        List<Node> nodeList = processData.getJSONArray("nodes").toJavaList(Node.class);
-//        for (Node o : nodeList) {
-////            System.out.println(JSONObject.parseObject(JSONObject.toJSONString(o)).getString("type"));
-//            System.out.println(o.getType());
-//            System.out.println(o.getData());
-//        }
-        JSONArray nodeList = processData.getJSONArray("nodes");
-        for (Object o :nodeList){
-//            System.out.println(o);
-//            System.out.println(o.toString());
-            JSONObject nodeJson = JSONObject.parseObject(o.toString());
-            System.out.println(nodeJson.getString("type"));
-            System.out.println(JSONObject.parseObject(o.toString()).getString("type"));
-//            System.out.println(JSONObject.toJSONString(o));
-//            System.out.println(JSONObject.parseObject(JSONObject.toJSONString(o)));
-//            System.out.println(JSONObject.parseObject(JSONObject.toJSONString(o)).getString("type"));
+        for (Object object : array) {
+            JSONObject gdqxsq = JSONObject.parseObject(JSONObject.toJSONString(object));
+            String[] jyqxs = gdqxsq.getString("jyqx").split(";");
+            for (String jyqx : jyqxs) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("gdh", gdqxsq.get("gdh"));
+                jsonObject.put("jyqx", jyqx);
+                if (jyqxMaps.containsKey(jyqx)) {
+                    jyqxMaps.get(jyqx).getJSONArray("gdqxsq").add(jsonObject);
+                } else {
+                    JSONObject gdqxsqObject = new JSONObject();
+                    JSONArray jsonArray = new JSONArray();
+                    jsonArray.add(jsonObject);
+                    gdqxsqObject.put("gdqxsq", jsonArray);
+                    jyqxMaps.put(jyqx, gdqxsqObject);
+                }
+            }
         }
 
+        jyqxMaps.values().forEach(System.out::println);
+
+        System.out.println(jyqxMaps.values());
+    }
+
+
+    @Test
+    public void  chaor(){
+        // 原始的JSON数据
+        String originalJson = "{\"gdqxsq\":[{\"gdh\":\"A1\",\"jyqx\":\"1;2;8\"},{\"gdh\":\"A2\",\"jyqx\":\"1;8;10\"}]}";
+        JSONObject originalObj = JSONObject.parseObject(originalJson);
+        JSONArray gdqxsqArray = originalObj.getJSONArray("gdqxsq");
+
+        //类聚
+        Map<String,List<String>> jyqxMap = new HashMap<>();
+        for (int i = 0; i < gdqxsqArray.size(); i++) {
+            JSONObject item = gdqxsqArray.getJSONObject(i);
+            String[] jyqxValues = item.getString("jyqx").split(";");
+            String gdh = item.getString("gdh");
+            for (String jyqxValue : jyqxValues) {
+                List<String> gdhMap = jyqxMap.get(jyqxValue) == null ? new ArrayList<>() : jyqxMap.get(jyqxValue);
+                gdhMap.add(gdh);
+                jyqxMap.put(jyqxValue,gdhMap);
+            }
+        }
+        //重组
+        ArrayList<JSONObject> newObj = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : jyqxMap.entrySet()) {
+            ArrayList<JSONObject> jsonObjects = new ArrayList<>();
+            for (String gdh : entry.getValue()) {
+                JSONObject newJson = new JSONObject();
+                newJson.put("gdh",gdh);
+                newJson.put("jyqx",entry.getKey());
+                jsonObjects.add(newJson);
+            }
+            JSONObject value = new JSONObject();
+            value.put("gdqxsq",jsonObjects);
+            newObj.add(value);
+        }
+        System.out.println(newObj);
+    }
+
+
+    @Test
+    public void test1() {
+        String s = "";
+        System.out.println(s.length());
+        System.out.println(s == null);
+        System.out.println(s.isEmpty());
     }
 
     @Data

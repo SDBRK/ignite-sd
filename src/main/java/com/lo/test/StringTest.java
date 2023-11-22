@@ -4,11 +4,11 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.ObjectUtils;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +31,7 @@ public class StringTest {
 
 
     @Test
-    public void test(){
+    public void test() {
 //        String s = "aa.txt";
 //        String fileName = s.substring(0,s.lastIndexOf("."));
 //        String nameExt  = s.substring(s.lastIndexOf("."));
@@ -175,10 +175,59 @@ public class StringTest {
     }
 
     @Test
-    public void charToInt(){
-        System.out.println((int)'A');
-        System.out.println((int)'Z');
-        System.out.println((int)'a');
-        System.out.println((int)'z');
+    public void charToInt() {
+        System.out.println((int) 'A');
+        System.out.println((int) 'Z');
+        System.out.println((int) 'a');
+        System.out.println((int) 'z');
+    }
+
+    @Test
+    public void replaceStr() {
+//        String str = "yyyyMMdd今日文件";
+        String str = null;
+
+        String replace = str.replace("yyyyMMdd", DateUtil.format(new Date(), DatePattern.PURE_DATE_FORMAT));
+
+        System.out.println(replace);
+    }
+
+    @Test
+    public void joinStr() {
+
+        List<String> str = null;
+
+        String s = ObjectUtils.isEmpty(str) ? "aaaa" : String.join(",", str);
+
+        System.out.println(s);
+    }
+
+
+    @Test
+    public void toClass(){
+
+        JSONObject jsonObject =  new JSONObject();
+
+        List<String> list = Arrays.asList("121212","121213");
+
+        jsonObject.put("destNumbers", list);
+        jsonObject.put("attachFileRuleCodes", list);
+
+        Config config = jsonObject.toJavaObject(Config.class);
+
+        // Boolean值 如果为空 默认为false
+        System.out.println(config.isNeedTaskDataForAttach);
+
+        System.out.println(config);
+    }
+
+    @Data
+    public static class Config {
+        /**
+         * 员工号
+         */
+        private List<String> destNumbers;
+        private boolean isNeedTaskDataForAttach;
+        private Set<String> attachFileRuleCodes;
     }
 }

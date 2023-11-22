@@ -3,7 +3,12 @@ package com.lo.test;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+
+import java.util.List;
 
 /**
  * @author RujiangLiu
@@ -53,5 +58,75 @@ public class JsonObjectTest {
         JSONObject jsonObject = JSON.parseObject(s);
 
         System.out.println(jsonObject.getString("userName"));
+    }
+
+    @Test
+    public void toEntity(){
+
+        JSONObject requestJson = new JSONObject();
+        requestJson.put("esbUsername", "esbProperty.getUsername()");
+        requestJson.put("esbPassword", "esbProperty.getPassword()");
+        requestJson.put("srvUsername", "srvProperty.getUsername()");
+        requestJson.put("srvPassword", "srvProperty.getPassword()");
+        requestJson.put("destNumbers", "srvProperty.getDestNumbers()");
+        requestJson.put("msgType", "srvProperty.getMsgType()");
+        requestJson.put("destType", "srvProperty.getDestType()");
+        requestJson.put("content", "messageInfo.getContent()");
+
+
+        String request = requestJson.toJSONString();
+
+        SendWeChatMessageRequestDto dto = JSON.parseObject(request, SendWeChatMessageRequestDto.class);
+
+        System.out.println(dto);
+    }
+
+    @Data
+    public static class SendWeChatMessageRequestDto {
+
+        private SendWeChatFileRequestDto fileRequestDto;
+
+        private String content;
+
+    }
+
+    @Data
+    public static class SendWeChatFileRequestDto {
+        /**
+         * esb用户名
+         */
+        private String esbUsername;
+        /**
+         * esb密码
+         */
+        private String esbPassword;
+        /**
+         * 推送系统认证用户名(测试环境直接填AFA，生产环境需要走申请流程)
+         */
+        private String srvUsername;
+        /**
+         * 推送系统认证密码(测试环境直接填123123，生产环境需要走申请流程)
+         */
+        private String srvPassword;
+        /**
+         * 员工号（用,隔开,最多支持1000个）
+         */
+        private String destNumbers;
+        /**
+         * 业务类型编码,测试环境为10_1_1
+         */
+        private String msgType;
+        /**
+         * 账号类型(EMPNO)
+         */
+        private String destType;
+        /**
+         * 备注,可以自定义
+         */
+        private String remark;
+        /**
+         * 信息编辑者，请自定，后续用于标识调用接口的系统
+         */
+        private String author;
     }
 }

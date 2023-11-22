@@ -186,4 +186,11 @@ public class DateFormatTest {
 
         System.out.println(offsetDate);
     }
+
+    @Test
+    public void getF2(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -2);
+        System.out.println(calendar.getTime());
+    }
 }

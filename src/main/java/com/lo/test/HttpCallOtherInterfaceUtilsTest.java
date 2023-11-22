@@ -2,14 +2,18 @@ package com.lo.test;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
+import oracle.jdbc.pool.OracleDataSource;
 import org.junit.jupiter.api.Test;
 
+import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +26,33 @@ import java.util.stream.Collectors;
  */
 public class HttpCallOtherInterfaceUtilsTest {
 
+
+    public static void main(String[] args) throws Exception {
+        OracleDataSource dataSource = new OracleDataSource();
+        dataSource.setURL("jdbc:oracle:thin:@127.0.0.1:1521:OMP2");
+        dataSource.setUser("OMP2");
+        dataSource.setPassword("OMP2");
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement("insert T_DAY set RULE_CONFIG = ? where DETAIL_ID = ?");
+            List<Day> days = getDate("202301");
+            for (Day day : days) {
+                preparedStatement.setInt(1, day.natureDay);
+                preparedStatement.setBoolean(2, day.isTrading());
+                preparedStatement.setInt(3, day.calendarId);
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+
+            System.out.println("新增日历数据完成");
+        }
+
+    }
+
     @Test
-    public void getDate() {
+    public static List<Day> getDate(String dateStr) {
         try {
-            String dateStr = "202304";
+//            String dateStr = "202304";
             String url = "https://tool.bitefu.net/jiari/?d=" + dateStr + "&info=1";
             // 把字符串转换为URL请求地址
             URL thisUrl = new URL(url);
@@ -58,10 +85,11 @@ public class HttpCallOtherInterfaceUtilsTest {
                 DateApi dateApi = JSONObject.parseObject(JSONObject.toJSONString(o), DateApi.class);
                 return new Day().toDay(dateApi);
             }).sorted(Comparator.comparingInt(Day::getNatureDay)).collect(Collectors.toList());
-            System.out.println(dateApis);
+            return dateApis;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     @Data
