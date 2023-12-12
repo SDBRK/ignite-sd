@@ -2,10 +2,11 @@ package com.lo.test;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
+import lombok.SneakyThrows;
 import oracle.jdbc.pool.OracleDataSource;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +15,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -28,19 +30,42 @@ public class HttpCallOtherInterfaceUtilsTest {
 
 
     public static void main(String[] args) throws Exception {
+    }
+
+    @Test
+    @SneakyThrows
+    @Transactional(rollbackFor = Exception.class)
+    public void calendarDate(){
+        // 数据库
         OracleDataSource dataSource = new OracleDataSource();
-        dataSource.setURL("jdbc:oracle:thin:@127.0.0.1:1521:OMP2");
+        dataSource.setURL("jdbc:oracle:thin:@127.0.0.1:1521:ORCL");
         dataSource.setUser("OMP2");
         dataSource.setPassword("OMP2");
 
+        // 获取当年十二个月
+        String year = "2024";
+        List<String> dateStrs = new ArrayList<>();
+        for (int i = 1; i <= 12; i++) {
+            if (i < 10) {
+                dateStrs.add(year + "0" + i);
+            } else {
+                dateStrs.add(year + i);
+            }
+        }
+
+        // 数据库连接语句预批处理插入
         try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("insert T_DAY set RULE_CONFIG = ? where DETAIL_ID = ?");
-            List<Day> days = getDate("202301");
-            for (Day day : days) {
-                preparedStatement.setInt(1, day.natureDay);
-                preparedStatement.setBoolean(2, day.isTrading());
-                preparedStatement.setInt(3, day.calendarId);
-                preparedStatement.addBatch();
+            PreparedStatement preparedStatement = connection.prepareStatement("insert into OMP2.T_DAY (ID, NATURE_DAY, TRADING, CALENDAR_ID) VALUES (SEQ_DAY.NEXTVAL,?, ?, ?)");
+            // 查询十二个月的日期
+            for (String dateStr : dateStrs) {
+                List<Day> days = getDate(dateStr);
+                assert days != null;
+                for (Day day : days) {
+                    preparedStatement.setInt(1, day.natureDay);
+                    preparedStatement.setBoolean(2, day.isTrading());
+                    preparedStatement.setInt(3, day.calendarId);
+                    preparedStatement.addBatch();
+                }
             }
             preparedStatement.executeBatch();
 
@@ -81,7 +106,9 @@ public class HttpCallOtherInterfaceUtilsTest {
             Map<String, Object> map = jsonObject.getInnerMap();
 
 //            List<DateApi> dateApis = map.values().stream().map(o -> JSONObject.parseObject(JSONObject.toJSONString(o), DateApi.class)).collect(Collectors.toList());
-            List<Day> dateApis = map.values().stream().map(o -> {
+            // 将接口返回的数据进行实体类转换
+            List<Day> dateApis;
+            dateApis = map.values().stream().map(o -> {
                 DateApi dateApi = JSONObject.parseObject(JSONObject.toJSONString(o), DateApi.class);
                 return new Day().toDay(dateApi);
             }).sorted(Comparator.comparingInt(Day::getNatureDay)).collect(Collectors.toList());
@@ -95,9 +122,9 @@ public class HttpCallOtherInterfaceUtilsTest {
     @Data
     public static class DateApi {
 
-//        private Integer status;
+        //        private Integer status;
         private Integer type;
-//        private String typename;
+        //        private String typename;
         private String day;
 //        private Integer unixtime;
 //        private String yearname;
@@ -124,7 +151,7 @@ public class HttpCallOtherInterfaceUtilsTest {
         public Day toDay(DateApi dateApi) {
             natureDay = Integer.parseInt(dateApi.getDay());
             trading = dateApi.getType() == 0;
-            calendarId = 2;
+            calendarId = 1; // 1|A股交易日 2|自然日
             return this;
         }
     }
