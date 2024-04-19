@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -128,6 +129,16 @@ public class StreamTest {
             this.nickname = nickname;
             this.status = status;
         }
+    }
+
+    @Test
+    public void test() {
+        Map<String, String> test1 = new ConcurrentHashMap<>();
+        test1.put("测试", "测试");
+        Map<String, String> test2 = test1.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        test1.clear();
+        System.out.println(test2);
     }
 
 }

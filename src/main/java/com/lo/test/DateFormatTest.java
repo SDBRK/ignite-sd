@@ -193,4 +193,20 @@ public class DateFormatTest {
         calendar.add(Calendar.DATE, -2);
         System.out.println(calendar.getTime());
     }
+
+    @Test
+    public void before(){
+        Date startDate = DateUtil.parseDate("2024-03-25");
+        Date endDate = DateUtil.parseDate("2024-03-26");
+
+        System.out.println(startDate.before(endDate));
+        System.out.println(startDate.compareTo(endDate));
+    }
+
+    @Test
+    public void endOf(){
+
+        System.out.println(DateUtil.endOfYear(new Date()).toDateStr());
+
+    }
 }

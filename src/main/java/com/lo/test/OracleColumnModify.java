@@ -12,9 +12,17 @@ public class OracleColumnModify {
     public static void main(String[] args) {
 
         // 表名
-        String tableName = "TACCOREQUEST";
+        String tableName = "TCONFIRM_PRE";
         // 日期字段调整 -迁移导致DATE字段变为VARCHAR2
-        List<String> columns = Arrays.asList("D_DATE","D_CDATE", "D_REQUESTDATE");
+        List<String> columns = Arrays.asList("D_CDATE",
+                "D_DATE",
+                "D_HOPEDATE",
+                "D_ORIGINALAPPDATE",
+                "D_ORIGINALCFMDATE",
+                "D_PROFITHOLDENDDATE",
+                "D_REQUESTDATE",
+                "D_REQUESTTIME",
+                "D_SENDDATE");
 
         // 最终执行脚本
         String executeSql = "";

@@ -2,6 +2,8 @@ package com.lo.test;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Random;
+
 /**
  * @author RujiangLiu
  * @date 2023/5/5
@@ -77,5 +79,18 @@ public class ContinuousMaximumTest {
             current += 1;
         }
         System.out.println(str.substring(maxStart, maxStart + max));
+    }
+
+    @Test
+    public void ifNo(){
+        int random = new Random().nextInt(9);
+        boolean random1 = new Random().nextBoolean();
+
+        if (random > 5 && !random1){
+            System.out.println("都对");
+            if (!random1){
+                System.out.println("对了一个");
+            }
+        }
     }
 }

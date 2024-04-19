@@ -58,6 +58,10 @@ public class JsonObjectTest {
         JSONObject jsonObject = JSON.parseObject(s);
 
         System.out.println(jsonObject.getString("userName"));
+
+        System.out.println(jsonObject.getBooleanValue("abnormal"));
+
+        System.out.println(jsonObject.getOrDefault("abnormal", true));
     }
 
     @Test
