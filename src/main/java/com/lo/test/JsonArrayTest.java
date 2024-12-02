@@ -58,14 +58,14 @@ public class JsonArrayTest {
 
 
     @Test
-    public void  chaor(){
+    public void chaor() {
         // 原始的JSON数据
         String originalJson = "{\"gdqxsq\":[{\"gdh\":\"A1\",\"jyqx\":\"1;2;8\"},{\"gdh\":\"A2\",\"jyqx\":\"1;8;10\"}]}";
         JSONObject originalObj = JSONObject.parseObject(originalJson);
         JSONArray gdqxsqArray = originalObj.getJSONArray("gdqxsq");
 
         //类聚
-        Map<String,List<String>> jyqxMap = new HashMap<>();
+        Map<String, List<String>> jyqxMap = new HashMap<>();
         for (int i = 0; i < gdqxsqArray.size(); i++) {
             JSONObject item = gdqxsqArray.getJSONObject(i);
             String[] jyqxValues = item.getString("jyqx").split(";");
@@ -73,7 +73,7 @@ public class JsonArrayTest {
             for (String jyqxValue : jyqxValues) {
                 List<String> gdhMap = jyqxMap.get(jyqxValue) == null ? new ArrayList<>() : jyqxMap.get(jyqxValue);
                 gdhMap.add(gdh);
-                jyqxMap.put(jyqxValue,gdhMap);
+                jyqxMap.put(jyqxValue, gdhMap);
             }
         }
         //重组
@@ -82,12 +82,12 @@ public class JsonArrayTest {
             ArrayList<JSONObject> jsonObjects = new ArrayList<>();
             for (String gdh : entry.getValue()) {
                 JSONObject newJson = new JSONObject();
-                newJson.put("gdh",gdh);
-                newJson.put("jyqx",entry.getKey());
+                newJson.put("gdh", gdh);
+                newJson.put("jyqx", entry.getKey());
                 jsonObjects.add(newJson);
             }
             JSONObject value = new JSONObject();
-            value.put("gdqxsq",jsonObjects);
+            value.put("gdqxsq", jsonObjects);
             newObj.add(value);
         }
         System.out.println(newObj);
@@ -96,7 +96,10 @@ public class JsonArrayTest {
 
     @Test
     public void test1() {
-        String s = "";
+        String s = null;
+        if (s != null && s.length() != 8) {
+            System.out.println(s);
+        }
         System.out.println(s.length());
         System.out.println(s == null);
         System.out.println(s.isEmpty());

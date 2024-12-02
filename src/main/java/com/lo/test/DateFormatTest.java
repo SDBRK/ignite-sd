@@ -1,9 +1,6 @@
 package com.lo.test;
 
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUnit;
-import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.*;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
@@ -196,17 +193,26 @@ public class DateFormatTest {
 
     @Test
     public void before(){
-        Date startDate = DateUtil.parseDate("2024-03-25");
-        Date endDate = DateUtil.parseDate("2024-03-26");
+        Date startDate = DateUtil.parseDate("2024-05-30");
+        Date endDate = DateUtil.parseDate("2024-05-31");
 
         System.out.println(startDate.before(endDate));
+        System.out.println(endDate.after(startDate));
         System.out.println(startDate.compareTo(endDate));
     }
 
     @Test
     public void endOf(){
-
         System.out.println(DateUtil.endOfYear(new Date()).toDateStr());
+    }
 
+    @Test
+    public void getTime(){
+        String time = "15:10:00";
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        DateTime dateTime = DateUtil.parseTime(time);
+        System.out.println(dateTime);
+        System.out.println(DateUtil.formatTime(dateTime));
+        System.out.println(timeFormat.format(dateTime));
     }
 }

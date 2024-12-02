@@ -1,7 +1,9 @@
 package com.lo.test;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.util.CollectionUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +27,14 @@ public class ListTest {
         l2.add(3L);
 
         System.out.println(l2.containsAll(l1));
+    }
+
+    @Test
+    public void empty(){
+        List<File> files = null;
+        if (CollectionUtils.isEmpty(files)){
+            System.out.println("空的");
+        }
     }
 
 }

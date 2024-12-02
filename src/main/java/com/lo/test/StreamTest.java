@@ -141,4 +141,12 @@ public class StreamTest {
         System.out.println(test2);
     }
 
+    @Test
+    public void emptyStream(){
+
+        List<UserInfo> userInfos = new ArrayList<>();
+        List<UserInfo> errorInfos = userInfos.stream().filter(userInfo -> userInfo.getNickname().equals("wowowo")).collect(Collectors.toList());
+        System.out.println(errorInfos);
+    }
+
 }

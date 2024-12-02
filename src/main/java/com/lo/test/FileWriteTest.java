@@ -1,5 +1,8 @@
 package com.lo.test;
 
+import cn.hutool.core.codec.Base64;
+import cn.hutool.core.codec.Base64Decoder;
+import cn.hutool.core.io.FileUtil;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
@@ -57,5 +60,13 @@ public class FileWriteTest {
         printWriter.flush();
         printWriter.close();
 
+    }
+
+    @Test
+    @SneakyThrows
+    public void base64ToFile(String absPath, String base64){
+        byte[] decodedBytes = Base64.decode(base64);
+        byte[] decodedBytes2 = Base64Decoder.decode(base64);
+        FileUtil.writeBytes(decodedBytes, absPath);
     }
 }

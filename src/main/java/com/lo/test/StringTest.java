@@ -6,11 +6,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author RujiangLiu
@@ -79,14 +82,14 @@ public class StringTest {
 //        System.out.println(b);
 
 
-        String name = "测试${YYYYMMDD}";
-        String name2 = "测试${yyyyDDA}";
+        String name2 = "测试${YYYYMMDD}";
+//        String name2 = "测试${yyyyDDA}";
         String date = "";
         Matcher matcher = GROUP_PATTERN.matcher(name2);
 
         while (matcher.find()) {
             String fullName = matcher.group();
-            System.out.println(fullName);
+            System.out.println("fullName:" + fullName);
             String p = matcher.group(1);
             String p2 = matcher.group(2);
             String p3 = matcher.group(3);
@@ -204,11 +207,11 @@ public class StringTest {
 
 
     @Test
-    public void toClass(){
+    public void toClass() {
 
-        JSONObject jsonObject =  new JSONObject();
+        JSONObject jsonObject = new JSONObject();
 
-        List<String> list = Arrays.asList("121212","121213");
+        List<String> list = Arrays.asList("121212", "121213");
 
         jsonObject.put("destNumbers", list);
         jsonObject.put("attachFileRuleCodes", list);
@@ -229,5 +232,54 @@ public class StringTest {
         private List<String> destNumbers;
         private boolean isNeedTaskDataForAttach;
         private Set<String> attachFileRuleCodes;
+    }
+
+    @Test
+    public void getMessage() {
+        String data = "[{\"资产名称\":\"长江19号(乐享1天)\",\"提醒内容\":\"长江19号(乐享1天),有指令等待处理\"},{\"资产名称\":\"长江19号(乐享1天)\",\"提醒内容\":\"长江19号(乐享1天),有指令等待处理\"},{\"资产名称\":\"长江19号(乐享1天)\",\"提醒内容\":\"长江19号(乐享1天)," +
+                "有指令等待处理\"},{\"资产名称\":\"长江19号(乐享1天)\",\"提醒内容\":\"长江19号(乐享1天),有指令等待处理\"}]";
+        StringBuilder warnText = new StringBuilder();
+
+        JSONArray jsonArray = JSONObject.parseArray(data);
+        for (Object o : jsonArray) {
+            String text = getMessage(String.valueOf(o));
+            if (StringUtils.hasText(text)) {
+                warnText.append(text).append(",");
+            }
+        }
+
+        System.out.println(warnText);
+    }
+
+    public String getMessage(String data) {
+        Map map = JSONObject.parseObject(data, Map.class);
+        Object message = map.get("提醒内容");
+        if (ObjectUtils.isEmpty(message)) {
+            return null;
+        }
+        return String.valueOf(map.get("提醒内容"));
+    }
+
+    @Test
+    public void exceptionData() {
+        String data = "[{\"资产名称\":\"长江19号(乐享1天)\",\"提醒内容\":\"长江19号(乐享1天),有指令等待处理\",\"status\":\"1\"},{\"资产名称\":\"长江19号(乐享1天)\",\"提醒内容\":\"长江19号(乐享1天),有指令等待处理\",\"status\":\"1\"},{\"资产名称\":\"长江19号" +
+                "(乐享1天)\",\"提醒内容\":\"长江19号(乐享1天)," +
+                "有指令等待处理\",\"status\":\"1\"},{\"资产名称\":\"长江19号(乐享1天)\",\"提醒内容\":\"长江19号(乐享1天),有指令等待处理\",\"status\":\"1\"}]";
+        List<Map> mapData = JSONObject.parseArray(data, Map.class);
+        mapData = mapData.stream().filter(map -> "0".equals(map.get("status"))).collect(Collectors.toList());
+        System.out.println(mapData);
+        String transData = JSONObject.toJSONString(mapData);
+        System.out.println(transData);
+        if (StringUtils.hasText(transData)) {
+            System.out.println("不是空的，长度：" + transData.length());
+        }
+        List<LinkedHashMap> firstList = JSONArray.parseArray(transData, LinkedHashMap.class);
+        System.out.println(!CollectionUtils.isEmpty(firstList));
+    }
+
+    @Test
+    public void getStamp() {
+        // 16位时间戳
+        System.out.println(String.valueOf(System.currentTimeMillis()));
     }
 }
